@@ -4,8 +4,11 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 import { auth } from '../../firebase/firebase.utils';
 import { AuthContext } from '../../Context/AuthContext';
+import { connect } from 'react-redux';
+import CartIcon from '../cart-icon/cart-icon';
+import CartDropdown from '../cart-dropdown/cart-dropdown';
 
-function Header() {
+function Header({ hidden }) {
   const { currentUser } = useContext(AuthContext);
   return (
     <div className="header">
@@ -28,9 +31,16 @@ function Header() {
             SIGN-IN
           </Link>
         )}
+        <CartIcon />
       </div>
+      {hidden ? null : <CartDropdown />}
     </div>
   );
 }
 
-export default Header;
+const mapStateToProps = ({ cart: { hidden } }) => ({
+  // currentUser: state.user.currentUser,
+  hidden,
+});
+
+export default connect(mapStateToProps)(Header);
