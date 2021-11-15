@@ -1,7 +1,102 @@
-import React from 'react';
+import React, { useState } from 'react';
+import FormInputs from '../form-input/form-input';
+import CustomButton from '../button/custom-button';
+import './sign-up.scss';
+
+import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 function SignUp() {
-  return <div></div>;
+  const [signUpInfo, setSignUpInfo] = useState({
+    displayName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const { displayName, email, password, confirmPassword } = signUpInfo;
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (confirmPassword !== password) {
+      alert('Your passwords do not match!');
+      return;
+    }
+    // your register logic here
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((res) => {
+        console.log(res);
+        return res;
+      })
+      .then(async (auth) => {
+        const newUser = await createUserProfileDocument(auth.user, {
+          displayName,
+        });
+        console.log(newUser);
+      })
+      .then(() => {
+        setSignUpInfo({
+          displayName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        });
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  }
+
+  function handleChange(event) {
+    const { value, name } = event.target;
+    setSignUpInfo({ ...signUpInfo, [name]: value });
+  }
+
+  return (
+    <div className="sign-up">
+      <h2 className="title">I do not have an account</h2>
+      <span>Sign up with your email and password</span>
+      <form className="sign-up-form" onSubmit={(e) => handleSubmit(e)}>
+        <FormInputs
+          type="text"
+          name="displayName"
+          value={displayName}
+          handleChange={handleChange}
+          required
+          label="Display Name"
+          autoComplete="true"
+        />
+        <FormInputs
+          type="email"
+          name="email"
+          value={email}
+          handleChange={handleChange}
+          required
+          label="Email"
+          autoComplete="true"
+        />
+        <FormInputs
+          type="password"
+          name="password"
+          value={password}
+          handleChange={handleChange}
+          required
+          label="Password"
+          autoComplete="true"
+        />
+        <FormInputs
+          type="password"
+          name="confirmPassword"
+          value={confirmPassword}
+          handleChange={handleChange}
+          required
+          label="Confirm Password"
+          autoComplete="true"
+        />
+        <CustomButton type="submit">SIGN UP</CustomButton>
+      </form>
+    </div>
+  );
 }
 
 export default SignUp;
