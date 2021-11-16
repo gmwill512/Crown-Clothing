@@ -7,6 +7,9 @@ import { AuthContext } from '../../Context/AuthContext';
 import { connect } from 'react-redux';
 import CartIcon from '../cart-icon/cart-icon';
 import CartDropdown from '../cart-dropdown/cart-dropdown';
+import { selectCartHidden } from '../../redux/cart/cart.selector';
+import { createStructuredSelector } from 'reselect';
+//import {selectCurrentUser} from '../../redux/user/user-selector'
 
 function Header({ hidden }) {
   const { currentUser } = useContext(AuthContext);
@@ -21,6 +24,9 @@ function Header({ hidden }) {
         </Link>
         <Link to="/contact" className="option">
           CONTACT
+        </Link>
+        <Link to="/checkout" classname="option">
+          CHECKOUT
         </Link>
         {currentUser ? (
           <div className="option" onClick={() => auth.signOut()}>
@@ -38,9 +44,9 @@ function Header({ hidden }) {
   );
 }
 
-const mapStateToProps = ({ cart: { hidden } }) => ({
-  // currentUser: state.user.currentUser,
-  hidden,
+const mapStateToProps = createStructuredSelector({
+  // curretUser: selectCurrentUser(state)
+  hidden: selectCartHidden,
 });
 
 export default connect(mapStateToProps)(Header);
