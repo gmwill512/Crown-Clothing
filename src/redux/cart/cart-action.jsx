@@ -6,5 +6,5 @@ export const setDropdownHidden = {
 
 export const addItem = (item) => ({
   type: CartActionTypes.ADD_ITEM,
-  action: item,
+  payload: item,
 });
