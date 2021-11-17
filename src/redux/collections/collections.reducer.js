@@ -1,4 +1,4 @@
-const SHOP_DATA = [
+const INITAL_STATE = [
   {
     id: 1,
     title: 'Hats',
@@ -246,4 +246,11 @@ const SHOP_DATA = [
   },
 ];
 
-export default SHOP_DATA;
+function collectionReducer(state = INITAL_STATE, action) {
+  switch (action.type) {
+    default:
+      return state;
+  }
+}
+
+export default collectionReducer;

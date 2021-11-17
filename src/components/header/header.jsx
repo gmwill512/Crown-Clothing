@@ -1,18 +1,22 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import './header.scss';
 import { Link } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 import { auth } from '../../firebase/firebase.utils';
-import { AuthContext } from '../../Context/AuthContext';
+
 import { connect } from 'react-redux';
 import CartIcon from '../cart-icon/cart-icon';
 import CartDropdown from '../cart-dropdown/cart-dropdown';
 import { selectCartHidden } from '../../redux/cart/cart.selector';
 import { createStructuredSelector } from 'reselect';
-//import {selectCurrentUser} from '../../redux/user/user-selector'
+import { selectCurrentUser } from '../../redux/user/user-selector';
+import { setCurrentUser } from '../../redux/user/user.action';
 
-function Header({ hidden }) {
-  const { currentUser } = useContext(AuthContext);
+function Header({ hidden, currentUser, setCurrentUser }) {
+  function handleClick() {
+    auth.signOut();
+    setCurrentUser(null);
+  }
   return (
     <div className="header">
       <Link to="/" className="logo-container">
@@ -25,11 +29,11 @@ function Header({ hidden }) {
         <Link to="/contact" className="option">
           CONTACT
         </Link>
-        <Link to="/checkout" classname="option">
+        <Link to="/checkout" className="option">
           CHECKOUT
         </Link>
         {currentUser ? (
-          <div className="option" onClick={() => auth.signOut()}>
+          <div className="option" onClick={() => handleClick()}>
             SIGN-OUT
           </div>
         ) : (
@@ -44,9 +48,12 @@ function Header({ hidden }) {
   );
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
 const mapStateToProps = createStructuredSelector({
-  // curretUser: selectCurrentUser(state)
+  currentUser: selectCurrentUser,
   hidden: selectCartHidden,
 });
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

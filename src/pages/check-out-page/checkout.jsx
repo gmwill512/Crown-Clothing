@@ -13,13 +13,13 @@ function CheckoutPage({ cartItems, cartTotal }) {
   return (
     <div className="checkout-page">
       <div className="checkout-header">
-        <span classNamer="header-block">Product</span>
-        <span classNamer="header-block">Name</span>
-        <span classNamer="header-block">Quantity</span>
-        <span classNamer="header-block">Price</span>
-        <span classNamer="header-block">Remove</span>
+        <span className="header-block">Product</span>
+        <span className="header-block">Name</span>
+        <span className="header-block">Quantity</span>
+        <span className="header-block">Price</span>
+        <span className="header-block">Remove</span>
       </div>
-      {cartItems.map((item) => (
+      {(cartItems || []).map((item) => (
         <CheckoutItem cartItems={item} key={item.id} />
       ))}
 

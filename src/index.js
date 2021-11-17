@@ -4,21 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './Context/AuthContext';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import rootReducer from './redux/root-reducer';
+import { PersistGate } from 'redux-persist/integration/react';
+import StoreConfig from './redux/store';
 
-const store = createStore(rootReducer);
+const storeConfig = StoreConfig();
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <AuthProvider>
-        <BrowserRouter>
+    <Provider store={storeConfig.store}>
+      <BrowserRouter>
+        <PersistGate persistor={storeConfig.persistor}>
           <App />
-        </BrowserRouter>
-      </AuthProvider>
+        </PersistGate>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

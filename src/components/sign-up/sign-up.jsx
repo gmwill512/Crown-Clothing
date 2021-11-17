@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormInputs from '../form-input/form-input';
 import CustomButton from '../button/custom-button';
 import './sign-up.scss';
-
+import { connect } from 'react-redux';
 import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+} from 'firebase/auth';
+import { createStructuredSelector } from 'reselect';
+import { setCurrentUser } from '../../redux/user/user.action';
+import { selectCurrentUser } from '../../redux/user/user-selector';
 
-function SignUp() {
+function SignUp({ setCurrentUser, currentUser }) {
   const [signUpInfo, setSignUpInfo] = useState({
     displayName: '',
     email: '',
@@ -51,6 +57,19 @@ function SignUp() {
     const { value, name } = event.target;
     setSignUpInfo({ ...signUpInfo, [name]: value });
   }
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user ? user : null);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('The user is', currentUser);
+  }, [currentUser]);
 
   return (
     <div className="sign-up">
@@ -99,4 +118,11 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

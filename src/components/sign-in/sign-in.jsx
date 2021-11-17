@@ -1,17 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormInputs from '../form-input/form-input';
 import './sign-in.scss';
 import CustomButton from '../button/custom-button';
-import { AuthContext } from '../../Context/AuthContext';
+import { connect } from 'react-redux';
 import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
 import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import { selectCurrentUser } from '../../redux/user/user-selector';
+import { createStructuredSelector } from 'reselect';
+import { setCurrentUser } from '../../redux/user/user.action';
 
-function SignIn() {
-  const { setCurrentUser } = useContext(AuthContext);
+function SignIn({ setCurrentUser, currentUser }) {
   const [logInInfo, setLogInInfo] = useState({ email: '', password: '' });
   const [google, setGoogle] = useState(false);
   const { email, password } = logInInfo;
@@ -88,6 +90,7 @@ function SignIn() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log('sign-in', currentUser);
   return (
     <div className="sign-in">
       <h2>I already have an account</h2>
@@ -122,4 +125,11 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
